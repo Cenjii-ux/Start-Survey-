@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>START SURVEY</title>
+
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 600px;
+    }
+
+    #text {
+      font-size: 1.2em;
+      white-space: pre-line;
+    }
+
+    .buttons {
+      margin-top: 20px;
+    }
+
+    button {
+      margin: 10px;
+      padding: 10px 35px;
+      background: black;
+      color: white;
+      border: 1px solid white;
+      cursor: pointer;
+      font-family: monospace;
+    }
+
+    button:hover {
+      background: white;
+      color: black;
+    }
+
+    #glitch {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(255,255,255,0.08),
+        rgba(255,255,255,0.08) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="glitch"></div>
+
+  <div class="container">
+    <p id="text">START SURVEY?</p>
+    <div class="buttons">
+      <button onclick="answer('yes')">YES</button>
+      <button onclick="answer('no')">NO</button>
+    </div>
+  </div>
+
+  <script>
+  let startTime = Date.now();
+  let questionIndex = 0;
+  let finalIndex = 0;
+  let typingInterval;
+
+  const questions = [
+    "START SURVEY?",
+    "Are you alone right now?",
+    "Do you believe this survey is harmless?",
+    "Have you answered honestly so far?",
+    "Do you feel watched when using a screen?",
+    "If you stopped now, would it bother you?",
+    "Do you trust what is asking these questions?",
+    "Would you like to continue?",
+  "Are you completely sure you are real right now?",
+  "Do you believe your thoughts belong only to you?",
+  "Have you ever questioned whether this moment has happened before?",
+  "If your memories were altered, would you notice?",
+  "Do you trust your mind to tell you the truth?",
+  "Are you certain you chose to be who you are today?",
+  "Do you think reality exists when you’re not observing it?",
+  "Have you ever felt like you were watching yourself from inside?",
+  "Would you recognize yourself without your memories?",
+  "Do you believe you have full control over your decisions?",
+  "If you disappeared, would the world feel different?",
+  "Are you sure your awareness ends when you sleep?",
+  "Do you believe time is moving forward right now?",
+  "Have you ever felt like something was subtly “off” about the world?",
+  "Would you know if you were being guided toward certain choices?",
+  "Are you confident that this is your first time answering these questions?",
+  "Do you believe your identity is permanent?",
+  "If reality depended on you, would you feel it?",
+  "Do you trust your senses completely?",
+  "After answering these questions, do you feel exactly the same as before?"
+];
+
+
+  const finalQuestions = [
+    "Before this survey, did you feel real?",
+    "What makes you certain you exist?",
+    "If no one observes you, do your choices matter?",
+    "Are your thoughts truly yours?",
+    "Or are they responses to something unseen?",
+
+    "This survey did not change you.",
+    "It only revealed you.",
+    "You may close this now.",
+    "It will not stop thinking about you."
+  ];
+
+  function glitchEffect() {
+    const glitch = document.getElementById("glitch");
+    glitch.style.opacity = 0.25;
+    setTimeout(() => glitch.style.opacity = 0, 120);
+  }
+
+  function typeText(text) {
+    const display = document.getElementById("text");
+    display.textContent = "";
+    let i = 0;
+
+    clearInterval(typingInterval);
+
+    typingInterval = setInterval(() => {
+      display.textContent += text.charAt(i);
+      i++;
+
+      if (i >= text.length) {
+        clearInterval(typingInterval);
+      }
+    }, 35);
+  }
+
+  function answer(choice) {
+    const now = Date.now();
+    const hesitation = ((now - startTime) / 1000).toFixed(1);
+
+    let history =
+      JSON.parse(localStorage.getItem("observerChoices")) || [];
+
+    history.push({
+      question: questions[questionIndex],
+      answer: choice,
+      hesitation: hesitation
+    });
+
+    localStorage.setItem(
+      "observerChoices",
+      JSON.stringify(history)
+    );
+
+    setTimeout(nextQuestion, 1000);
+  }
+
+  function nextQuestion() {
+    questionIndex++;
+    startTime = Date.now();
+
+    if (questionIndex < questions.length) {
+      if (Math.random() < 0.3) glitchEffect();
+      typeText(questions[questionIndex]);
+    } else {
+      endSurvey();
+    }
+  }
+
+  function endSurvey() {
+    // hide buttons during existential ending
+    document.querySelector(".buttons").style.display = "none";
+    finalIndex = 0;
+    showFinalQuestion();
+  }
+
+  function showFinalQuestion() {
+    if (finalIndex < finalQuestions.length) {
+      if (Math.random() < 0.4) glitchEffect();
+      typeText(finalQuestions[finalIndex]);
+      finalIndex++;
+      setTimeout(showFinalQuestion, 2600);
+    }
+  }
+
+  // start survey with typing animation
+  typeText(questions[0]);
+</script>
+
+ 
