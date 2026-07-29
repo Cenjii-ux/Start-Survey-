@@ -62,22 +62,86 @@
         transparent 3px
       );
     }
+
+    input{
+    background:black;
+    color:white;
+    border:1px solid white;
+    padding:10px;
+    width:220px;
+    font-family:monospace;
+}
+
+input:focus{
+    outline:none;
+}
   </style>
 </head>
 
 <body>
 
-  <div id="glitch"></div>
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="container">
+    <h2>LOGIN REQUIRED</h2>
 
-  <div class="container">
-    <p id="text">START SURVEY?</p>
-    <div class="buttons">
-      <button onclick="answer('yes')">YES</button>
-      <button onclick="answer('no')">NO</button>
+    <input type="text" id="username" placeholder="Username"><br><br>
+
+    <input type="password" id="password" placeholder="Password"><br><br>
+
+    <button onclick="login()">LOGIN</button>
+
+    <p id="loginMessage" style="color:red;"></p>
+</div>
+
+<!-- SURVEY -->
+<div id="surveyScreen" style="display:none;">
+
+    <div id="glitch"></div>
+
+    <img id="jumpscare" src="nics.jfif"
+    style="
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    display:none;
+    z-index:9999;
+    object-fit:cover;
+    ">
+
+    <audio id="scareSound" src="the-weeknd-rizz.mp3"></audio>
+
+    <div class="container">
+        <p id="text">START SURVEY?</p>
+
+        <div class="buttons">
+            <button onclick="answer('yes')">YES</button>
+            <button onclick="answer('no')">NO</button>
+        </div>
     </div>
-  </div>
+
+</div>
+
+
 
   <script>
+
+    function triggerJumpscare() {
+
+  const img = document.getElementById("jumpscare");
+  const sound = document.getElementById("scareSound");
+
+  img.style.display = "block";
+  sound.play();
+
+  // optional: hide after 2 seconds
+  setTimeout(() => {
+    img.style.display = "none";
+  }, 2000);
+
+}
+
     let startTime = Date.now();
     let questionIndex = 0;
     let finalIndex = 0;
@@ -145,6 +209,11 @@
       setTimeout(() => glitch.style.opacity = 0, 120);
     }
 
+    document.body.style.backgroundColor = "white";
+setTimeout(()=>{
+ document.body.style.backgroundColor = "black";
+},100);
+
     function typeText(text) {
       const display = document.getElementById("text");
       display.textContent = "";
@@ -163,6 +232,12 @@
     }
 
     function answer(choice) {
+      // example: jumpscare on question 3 if No is clicked
+if(choice === "no" && questionIndex === 16){
+    triggerJumpscare();
+}
+setTimeout(nextQuestion, 1000);
+
       const now = Date.now();
       const hesitation = ((now - startTime) / 1000).toFixed(1);
 
@@ -223,6 +298,32 @@
     }
 
     // Start survey
+
+    // LOGIN
+
+const USERNAME = "observer";
+const PASSWORD = "0427";
+
+function login(){
+
+    const user = document.getElementById("username").value;
+    const pass = document.getElementById("password").value;
+
+    if(user === USERNAME && pass === PASSWORD){
+
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("surveyScreen").style.display = "block";
+
+        typeText(questions[0]);
+
+    }else{
+
+        document.getElementById("loginMessage").textContent =
+        "ACCESS DENIED";
+
+    }
+
+}
     typeText(questions[0]);
   </script>
 
